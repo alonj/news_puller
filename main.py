@@ -25,11 +25,12 @@ def main():
             summary = scraper.BeautifulSoup(item['summary'], 'html.parser').get_text()
             published = item['published']
             insert_arr = (key, title, summary, published, feedID)
-            cursor.execute('INSERT INTO headlines(head_ID, headline, subhead, timestamp, feedID) VALUES(?,?,?,?,?)', insert_arr)
+            cursor.execute(
+                'INSERT OR IGNORE INTO headlines(head_ID, headline, subhead, timestamp, feedID) VALUES(?,?,?,?,?)',
+                insert_arr)
             index += 1
     conn.commit()
     conn.close()
-    print(index)
 
 
 if __name__ == "__main__":
