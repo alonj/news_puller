@@ -3,7 +3,7 @@ import scraper
 import feedparser
 
 
-def main():
+def update_hl_db():
     sqlfile = '/Users/alonj/Databases/newsflow'
     conn = sqlite3.connect(sqlfile)
     cursor = conn.cursor()
@@ -33,6 +33,17 @@ def main():
     conn.close()
 
 
+def update_word_bank():
+    pass
+
+
+def update_centroids():
+    pass
+
+
+def main():
+    update_hl_db()
+
+
 if __name__ == "__main__":
     main()
-
