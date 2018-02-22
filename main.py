@@ -1,11 +1,13 @@
 import sqlite3
 import scraper
 import feedparser
+import stopwords_heb
+from nltk.corpus import stopwords
 
 
 def update_hl_db():
-    sqlfile = '/Users/alonj/Databases/newsflow'
-    conn = sqlite3.connect(sqlfile)
+    database = '/Users/alonj/Databases/newsflow'
+    conn = sqlite3.connect(database)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM headlines ORDER BY head_ID DESC LIMIT 1")
     result = cursor.fetchone()
@@ -17,24 +19,25 @@ def update_hl_db():
         index = 0
     for feed in sources:
         url = feed[1]
-        feedID = feed[0]
+        feed_id = feed[0]
         url_parsed = feedparser.parse(url)
         for item in url_parsed['items']:
             key = hex(index)
             title = item['title']
             summary = scraper.BeautifulSoup(item['summary'], 'html.parser').get_text()
             published = item['published']
-            insert_arr = (key, title, summary, published, feedID)
+            insert_arr = (key, title, summary, published, feed_id)
             cursor.execute(
                 'INSERT OR IGNORE INTO headlines(head_ID, headline, subhead, timestamp, feedID) VALUES(?,?,?,?,?)',
                 insert_arr)
             index += 1
     conn.commit()
     conn.close()
-
+    
 
 def update_word_bank():
-    pass
+    stop = set(stopwords.words('hebrew'))
+    print(stop)
 
 
 def update_centroids():
@@ -42,8 +45,11 @@ def update_centroids():
 
 
 def main():
-    update_hl_db()
+    # update_hl_db()
+    update_word_bank()
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    words = stopwords_heb.stopwords
+
