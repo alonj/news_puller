@@ -14,19 +14,22 @@
     <table id="8" parent="2" name="sqlite_master">
       <System>1</System>
     </table>
-    <table id="9" parent="2" name="word_bank"/>
-    <table id="10" parent="2" name="word_bank_tf"/>
-    <column id="11" parent="6" name="feedID">
+    <table id="9" parent="2" name="tfidf_raw"/>
+    <column id="10" parent="6" name="feedID">
       <Position>1</Position>
       <DataType>INT|0</DataType>
     </column>
-    <column id="12" parent="6" name="URL">
+    <column id="11" parent="6" name="URL">
       <Position>2</Position>
       <DataType>TEXT|0</DataType>
     </column>
-    <column id="13" parent="6" name="source">
+    <column id="12" parent="6" name="source">
       <Position>3</Position>
       <DataType>TEXT|0</DataType>
+    </column>
+    <column id="13" parent="6" name="last_update">
+      <Position>4</Position>
+      <DataType>DATETIME2|0</DataType>
     </column>
     <index id="14" parent="6" name="sqlite_autoindex_feeds_1">
       <NameSurrogate>1</NameSurrogate>
@@ -101,40 +104,27 @@ feedID</ColNames>
       <Position>1</Position>
       <DataType>TEXT|0</DataType>
     </column>
-    <column id="30" parent="9" name="count">
+    <column id="30" parent="9" name="doc_id">
       <Position>2</Position>
       <DataType>INT|0</DataType>
-      <DefaultExpression>1</DefaultExpression>
     </column>
-    <index id="31" parent="9" name="sqlite_autoindex_word_bank_1">
+    <column id="31" parent="9" name="count">
+      <Position>3</Position>
+      <DataType>INT|0</DataType>
+    </column>
+    <index id="32" parent="9" name="sqlite_autoindex_tfidf_raw_1">
       <NameSurrogate>1</NameSurrogate>
-      <ColNames>word</ColNames>
-      <ColumnCollations></ColumnCollations>
+      <ColNames>doc_id
+word</ColNames>
+      <ColumnCollations>
+</ColumnCollations>
       <Unique>1</Unique>
     </index>
-    <key id="32" parent="9">
-      <ColNames>word</ColNames>
+    <key id="33" parent="9" name="tfidf_raw_doc_id_word_pk">
+      <ColNames>doc_id
+word</ColNames>
       <Primary>1</Primary>
-      <UnderlyingIndexName>sqlite_autoindex_word_bank_1</UnderlyingIndexName>
-    </key>
-    <column id="33" parent="10" name="word">
-      <Position>1</Position>
-      <DataType>TEXT|0</DataType>
-    </column>
-    <column id="34" parent="10" name="tf">
-      <Position>2</Position>
-      <DataType>FLOAT|0</DataType>
-    </column>
-    <index id="35" parent="10" name="sqlite_autoindex_word_bank_tf_1">
-      <NameSurrogate>1</NameSurrogate>
-      <ColNames>word</ColNames>
-      <ColumnCollations></ColumnCollations>
-      <Unique>1</Unique>
-    </index>
-    <key id="36" parent="10">
-      <ColNames>word</ColNames>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>sqlite_autoindex_word_bank_tf_1</UnderlyingIndexName>
+      <UnderlyingIndexName>sqlite_autoindex_tfidf_raw_1</UnderlyingIndexName>
     </key>
   </database-model>
 </dataSource>
