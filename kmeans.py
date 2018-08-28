@@ -4,6 +4,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.metrics import silhouette_samples
 import stopwords_heb
+import datetime
 
 
 def find_K(X):
@@ -29,15 +30,17 @@ def find_K(X):
 def clusterify(docs):
     vectorizer = TfidfVectorizer(stop_words=stopwords_heb.stopwords)
     X = vectorizer.fit_transform(docs)
-    K = find_K(X)
+    K = max(find_K(X),2)
     model = KMeans(n_clusters=K, init='k-means++', max_iter=100, n_init=1).fit(X)
-    print("Top terms per cluster:")
-    order_centroids = model.cluster_centers_.argsort()[:, ::-1]
-    terms = vectorizer.get_feature_names()
-    for i in range(K):
-        print("Cluster %d:" % i),
-        for ind in order_centroids[i, :10]:
-            print(' %s' % terms[ind]),
-        print("\n")
-    print("\n")
-    print("Prediction")
+    with open('events.log','a+') as f:
+        f.write(str(datetime.datetime.now()) + "\n")
+#    print("Top terms per cluster:")
+#    order_centroids = model.cluster_centers_.argsort()[:, ::-1]
+#    terms = vectorizer.get_feature_names()
+#    for i in range(K):
+#        print("Cluster %d:" % i),
+#        for ind in order_centroids[i, :10]:
+#            print(' %s' % terms[ind]),
+#        print("\n")
+#    print("\n")
+#    print("Prediction")

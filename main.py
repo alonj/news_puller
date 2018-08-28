@@ -1,9 +1,11 @@
-import sqlite3
+#!/home/alonj/news_puller/venv/bin/python3
+
+import MySQLdb
 import scraper
 import feedparser
-import stopwords_heb
-from datetime import datetime, timedelta
 import kmeans
+import time
+from datetime import datetime
 
 from nltk.tokenize import word_tokenize
 
@@ -11,9 +13,15 @@ hl_dict_binary = {}
 
 
 def connect_db():
-    database = '/Users/alonj/Databases/newsflow'
-    conn = sqlite3.connect(database)
+    conn = MySQLdb.connect(	host="localhost",
+			       	user="alonj",
+				password="",
+				db="news")
+    conn.set_character_set('utf8')
     cursor = conn.cursor()
+    cursor.execute('SET NAMES utf8;')
+    cursor.execute('SET CHARACTER SET utf8;')
+    cursor.execute('SET character_set_connection=utf8;')
     return cursor, conn
 
 
@@ -74,8 +82,8 @@ def format_as_date(datestring):
                     month = "01"
         new_hour = str(hour_h) + hour[2:]
     hour = new_hour
-    time_format = str(year+"-"+month+"-"+day+" "+hour+".000")
-    return time_format
+    time_format = str(year+"-"+month+"-"+day+" "+hour)
+    return datetime.strptime(time_format, '%Y-%m-%d %H:%M:%S')
 
 
 def update_hl_db():
@@ -102,8 +110,8 @@ def update_hl_db():
             insert_arr = (key, title, summary, publish_date_formatted, feed_id)
             if publish_date_formatted > feed_last_updated:
                 cursor.execute(
-                    'INSERT OR IGNORE INTO headlines(head_ID, headline, subhead, timestamp, feedID) VALUES(?,?,?,DATETIME(?),?)',
-                    insert_arr)
+                    'INSERT IGNORE INTO headlines(headline, subhead, timestamp, feedID) VALUES(%s, %s, %s, %s)',
+                    (title, summary, publish_date_formatted, feed_id))
             index += 1
     conn.commit()
     conn.close()
@@ -113,9 +121,9 @@ def feed_update_date():
     cursor, conn = connect_db()
     cursor.execute("SELECT feedID, MAX(timestamp) FROM headlines GROUP BY feedID")
     dates = cursor.fetchall()
+    sql_q = "UPDATE feeds SET last_update=%s WHERE feedID=%s"
     for date in dates:
-        sql_q = "UPDATE feeds SET last_update='"+date[1]+"' WHERE feedID="+str(date[0])
-        cursor.execute(sql_q)
+        cursor.execute(sql_q,(date[1],date[0]))
     conn.commit()
     conn.close()
 
@@ -157,9 +165,11 @@ def gather_docs():
 
 
 def main():
-    feed_update_date()
-    update_hl_db()
-    gather_docs()
+    while 1:
+        feed_update_date()
+        update_hl_db()
+    #    gather_docs()
+        time.sleep(7200)
     # update_word_bank()
     # update_centroids()
 
